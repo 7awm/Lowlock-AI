@@ -25,18 +25,18 @@ client.once('ready', () => {
 client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
 
-  if (!message.content.startsWith('!pregunta')) return;
+  if (!message.content.startsWith('.ai')) return;
 
   const pregunta = message.content.slice('.ai'.length).trim();
   if (!pregunta) {
-    return message.reply('Por favor ingresa una pregunta. Ejemplo: `!pregunta ¿Qué es Node.js?`');
+    return message.reply('Por favor ingresa una pregunta. Ejemplo: `.ai ¿Qué es Node.js?`');
   }
 
   const pensando = await message.reply('Pensando...');
 
   try {
 const response = await ai.models.generateContent({
-  model: 'gemini-2.5-flash',
+  model: 'gemini-1.5-flash',
       contents: pregunta,
       config: {
         temperature: 0.7,
