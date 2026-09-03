@@ -27,7 +27,7 @@ client.on('messageCreate', async (message) => {
 
   if (!message.content.startsWith('!pregunta')) return;
 
-  const pregunta = message.content.slice('!pregunta'.length).trim();
+  const pregunta = message.content.slice('.ai'.length).trim();
   if (!pregunta) {
     return message.reply('Por favor ingresa una pregunta. Ejemplo: `!pregunta ¿Qué es Node.js?`');
   }
