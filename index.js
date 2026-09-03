@@ -36,7 +36,7 @@ client.on('messageCreate', async (message) => {
 
   try {
 const response = await ai.models.generateContent({
-  model: 'gemini-2.5-pro',
+  model: 'gemini-3.8-flash',
   contents: pregunta,
   config: {
     temperature: 0.7,
