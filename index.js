@@ -35,8 +35,8 @@ client.on('messageCreate', async (message) => {
   const pensando = await message.reply('Pensando...');
 
   try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+const response = await ai.models.generateContent({
+  model: 'gemini-2.5-flash',
       contents: pregunta,
       config: {
         temperature: 0.7,
