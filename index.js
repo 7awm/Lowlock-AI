@@ -21,10 +21,8 @@ client.once(Events.ClientReady, (c) => {
 client.on(Events.MessageCreate, async (message) => {
   if (message.author.bot) return;
 
-  // ========== IA ==========
-  // Uso: .ai ¿Cuál es la capital de Francia?
   if (message.content.toLowerCase().startsWith('.ai ')) {
-    const pregunta = message.content.slice(4).trim(); // Quita el ".ai "
+    const pregunta = message.content.slice(4).trim(); 
 
     if (!pregunta) {
       return message.reply('Escriba una pregunta. Ejemplo: `.ai ¿Qué es JavaScript?`');
