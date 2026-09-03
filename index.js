@@ -46,7 +46,7 @@ client.on('messageCreate', async (message) => {
           content: pregunta
         }
       ],
-      model: 'llama-3.3-70b-versatile', // Puedes cambiarlo por otro (ver abajo)
+      model: 'groq/compound', // Puedes cambiarlo por otro (ver abajo)
       temperature: 0.7,
       max_tokens: 800
     });
