@@ -46,7 +46,7 @@ client.on('messageCreate', async (message) => {
           content: pregunta
         }
       ],
-      model: 'openai/gpt-oss-120b', // Puedes cambiarlo por otro (ver abajo)
+      model: 'qwen/qwen3.6-27b', // Puedes cambiarlo por otro (ver abajo)
       temperature: 0.7,
       max_tokens: 800
     });
