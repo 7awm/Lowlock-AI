@@ -35,7 +35,7 @@ client.on(Events.MessageCreate, async (message) => {
         messages: [
           {
             role: 'system',
-            content: 'Eres un asistente serio, informacion precisa y clara. Responde siempre en español.'
+            content: 'Eres un asistente serio, informacion precisa, clara, responde en pequeños parrafos que desglocen la pregunta. Responde siempre en español.'
           },
           {
             role: 'user',
