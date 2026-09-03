@@ -39,14 +39,14 @@ client.on('messageCreate', async (message) => {
       messages: [
         {
           role: 'system',
-          content: 'Eres un asistente serio e informal.'
+          content: 'Eres un asistente serio y profesional que responde de manera concisa y clara. No uses emojis ni lenguaje informal. Responde siempre en español.'
         },
         {
           role: 'user',
           content: pregunta
         }
       ],
-      model: 'qwen/qwen3.6-27b', // Puedes cambiarlo por otro (ver abajo)
+      model: 'llama-3.1-8b-instant', 
       temperature: 0.7,
       max_tokens: 800
     });
