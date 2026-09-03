@@ -2,6 +2,10 @@ require('dotenv').config();
 const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
 const { GoogleGenAI } = require('@google/genai');
 
+if (!process.env.DISCORD_TOKEN || !process.env.GEMINI_API_KEY) {
+  console.error('❌ ERROR: Revisa tu archivo .env o las variables del panel. Falta DISCORD_TOKEN o GEMINI_API_KEY.');
+}
+
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY
 });
@@ -14,26 +18,26 @@ const client = new Client({
   ]
 });
 
+client.once('ready', () => {
+  console.log(`✅ Bot conectado e iniciado como: ${client.user.tag}`);
+});
+
 client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
 
-  // Ejemplo: si el mensaje empieza con un prefijo
   if (!message.content.startsWith('!pregunta')) return;
 
   const pregunta = message.content.slice('!pregunta'.length).trim();
-  if (!pregunta) return;
+  if (!pregunta) {
+    return message.reply('Por favor ingresa una pregunta. Ejemplo: `!pregunta ¿Qué es Node.js?`');
+  }
 
   const pensando = await message.reply('Pensando...');
 
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
-      contents: [
-        {
-          role: 'user',
-          parts: [{ text: pregunta }]
-        }
-      ],
+      contents: pregunta,
       config: {
         temperature: 0.7,
         maxOutputTokens: 800,
@@ -43,19 +47,23 @@ client.on('messageCreate', async (message) => {
 
     const respuesta = response.text;
 
+    const textoFinal = respuesta.length > 4000 ? respuesta.substring(0, 3997) + '...' : respuesta;
+
     const embed = new EmbedBuilder()
       .setColor(0xFFFFFF)
-      .setTitle('Contenido')
-      .setDescription(respuesta)
+      .setTitle('Respuesta')
+      .setDescription(textoFinal)
       .setFooter({ text: `Preguntado por ${message.author.tag}` })
       .setTimestamp();
 
     await pensando.edit({ content: null, embeds: [embed] });
 
   } catch (error) {
-    console.error(error);
-    await pensando.edit('Error en la respuesta, favor de intentar de nuevo.');
+    console.error('Error al generar contenido con Gemini:', error);
+    await pensando.edit('Ocurrió un error al procesar tu respuesta. Por favor intenta de nuevo.');
   }
 });
 
-client.login(process.env.DISCORD_TOKEN);
+client.login(process.env.DISCORD_TOKEN).catch((err) => {
+  console.error('❌ Error crítico al iniciar sesión en Discord:', err.message);
+});
