@@ -1,53 +1,27 @@
 require('dotenv').config();
-const { Client, GatewayIntentBits, Events, EmbedBuilder } = require('discord.js');
-const Groq = require('groq-sdk');
+cconst { GoogleGenAI } = require('@google/genai');
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY
 });
 
-const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-  ],
-});
-
-client.once(Events.ClientReady, (c) => {
-  console.log(`¡Bot listo! Conectado como ${c.user.tag}`);
-});
-
-client.on(Events.MessageCreate, async (message) => {
-  if (message.author.bot) return;
-
-  if (message.content.toLowerCase().startsWith('.ai ')) {
-    const pregunta = message.content.slice(4).trim(); 
-
-    if (!pregunta) {
-      return message.reply('Escriba una pregunta. Ejemplo: `.ai ¿Qué es JavaScript?`');
+// Dentro de tu función (donde antes hacías la completion):
+const response = await ai.models.generateContent({
+  model: 'gemini-2.5-flash',          // o 'gemini-3.5-flash' / 'gemini-flash-latest'
+  contents: [
+    {
+      role: 'user',
+      parts: [{ text: pregunta }]
     }
+  ],
+  config: {
+    temperature: 0.7,
+    maxOutputTokens: 800,
+    systemInstruction: 'Eres un asistente serio, informal...'
+  }
+});
 
-    const pensando = await message.reply('Pensando...');
-
-    try {
-      const completion = await groq.chat.completions.create({
-        messages: [
-          {
-            role: 'system',
-            content: 'Eres un asistente util, Responde siempre de manera concisa. Da unicamente la informacion esencial y relevante. No escribas textos largos ni agregues informacion innecesaria. Evita repetir la pregunta o explicar demasiado. Prioriza respuestas de 1 a 4 frases, salvo que el usuario pida explicitamente una explicacion detallada. Responde siempre en español.'
-          },
-          {
-            role: 'user',
-            content: pregunta
-          }
-        ],
-        model: 'openai/gpt-oss-120b',
-        temperature: 0.7,
-        max_tokens: 800
-      });
-
-      const respuesta = completion.choices[0]?.message?.content || 'No pude generar una respuesta.';
+const respuesta = response.text;
 
       const embed = new EmbedBuilder()
         .setColor(0xFFFFFF)
