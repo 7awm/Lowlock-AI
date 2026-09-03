@@ -42,7 +42,7 @@ client.on(Events.MessageCreate, async (message) => {
             content: pregunta
           }
         ],
-        model: 'openai/gpt-oss-20b',
+        model: 'openai/gpt-oss-120b',
         temperature: 0.7,
         max_tokens: 800
       });
