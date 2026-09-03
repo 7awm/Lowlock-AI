@@ -1,10 +1,11 @@
 require('dotenv').config();
-cconst { GoogleGenAI } = require('@google/genai');
+const { GoogleGenAI } = require('@google/genai');
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY
 });
 
+try {
 // Dentro de tu función (donde antes hacías la completion):
 const response = await ai.models.generateContent({
   model: 'gemini-2.5-flash',          // o 'gemini-3.5-flash' / 'gemini-flash-latest'
@@ -23,20 +24,18 @@ const response = await ai.models.generateContent({
 
 const respuesta = response.text;
 
-      const embed = new EmbedBuilder()
-        .setColor(0xFFFFFF)
-        .setTitle('Contenido')
-        .setDescription(respuesta)
-        .setFooter({ text: `Preguntado por ${message.author.username}` })
-        .setTimestamp();
+const embed = new EmbedBuilder()
+    .setColor(0xFFFFFF)
+    .setTitle('Contenido')
+    .setDescription(respuesta)
+    .setFooter({ text: `Preguntado por ${message.author.tag}` })
+    .setTimestamp();
 
-      await pensando.edit({ content: null, embeds: [embed] });
+await pensando.edit({ content: null, embeds: [embed] });
 
-    } catch (error) {
-      console.error(error);
-      await pensando.edit('Error en la respuesta, favor de intentar de nuevo.');
-    }
-  }
-});
+} catch (error) {
+    console.error(error);
+    await pensando.edit('Error en la respuesta, favor de intentar de nuevo.');
+}
 
 client.login(process.env.DISCORD_TOKEN);
