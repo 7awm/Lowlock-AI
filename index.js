@@ -1,13 +1,13 @@
 require('dotenv').config();
 const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
-const { GoogleGenAI } = require('@google/genai');
+const Groq = require('groq-sdk');
 
-if (!process.env.DISCORD_TOKEN || !process.env.GEMINI_API_KEY) {
-  console.error('❌ ERROR: Revisa tu archivo .env o las variables del panel. Falta DISCORD_TOKEN o GEMINI_API_KEY.');
+if (!process.env.DISCORD_TOKEN || !process.env.GROQ_API_KEY) {
+  console.error('❌ ERROR: Revisa tu archivo .env o las variables del panel. Falta DISCORD_TOKEN o GROQ_API_KEY.');
 }
 
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY
 });
 
 const client = new Client({
@@ -35,17 +35,23 @@ client.on('messageCreate', async (message) => {
   const pensando = await message.reply('Pensando...');
 
   try {
-const response = await ai.models.generateContent({
-  model: '"gemini-2.5-flash',
-  contents: pregunta,
-  config: {
-    temperature: 0.7,
-    maxOutputTokens: 800,
-    systemInstruction: 'Eres un asistente serio e informal.'
-  }
-});
+    const chatCompletion = await groq.chat.completions.create({
+      messages: [
+        {
+          role: 'system',
+          content: 'Eres un asistente serio e informal.'
+        },
+        {
+          role: 'user',
+          content: pregunta
+        }
+      ],
+      model: 'llama-3.3-70b-versatile', // Puedes cambiarlo por otro (ver abajo)
+      temperature: 0.7,
+      max_tokens: 800
+    });
 
-    const respuesta = response.text;
+    const respuesta = chatCompletion.choices[0]?.message?.content || 'No se pudo generar una respuesta.';
 
     const textoFinal = respuesta.length > 4000 ? respuesta.substring(0, 3997) + '...' : respuesta;
 
@@ -59,7 +65,7 @@ const response = await ai.models.generateContent({
     await pensando.edit({ content: null, embeds: [embed] });
 
   } catch (error) {
-    console.error('Error al generar contenido con Gemini:', error);
+    console.error('Error al generar contenido con Groq:', error);
     await pensando.edit('Ocurrió un error al procesar tu respuesta. Por favor intenta de nuevo.');
   }
 });
