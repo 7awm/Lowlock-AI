@@ -37,13 +37,13 @@ client.on('messageCreate', async (message) => {
   try {
 const response = await ai.models.generateContent({
   model: 'gemini-1.5-flash',
-      contents: pregunta,
-      config: {
-        temperature: 0.7,
-        maxOutputTokens: 800,
-        systemInstruction: 'Eres un asistente serio e informal.'
-      }
-    });
+  contents: pregunta,
+  config: {
+    temperature: 0.7,
+    maxOutputTokens: 800,
+    systemInstruction: 'Eres un asistente serio e informal.'
+  }
+});
 
     const respuesta = response.text;
 
